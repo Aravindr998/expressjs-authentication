@@ -93,24 +93,31 @@ app.get('/',(req,res) => {
   if(session.userid){
       res.render("home", {myusername, movies});
   }else{
-    const message = "";
-    res.render('index', {message})
+    if(req.session.message){
+      const message = req.session.message;
+      res.render('index', {message})
+    }else{
+      const message = "";
+      res.render('index', {message})
+    }
   }
 });
 app.post('/',(req,res) => {
 
   if(req.body.username != myusername){
     const message = "Enter valid Username"
-    res.render('index', {message})
+    req.session['message'] = message;
+    res.redirect('/')
   }else if(req.body.password != mypassword){
     const message = "Enter valid password"
-    res.render('index', {message})
+    req.session['message'] = message;
+    res.redirect('/')
   }
   else{
       session = req.session;
       session.userid = req.body.username;
       console.log(req.session);
-      res.render('home', {myusername, movies});
+      res.redirect('/');
   }
 })
 app.get('/logout',(req,res) => {
