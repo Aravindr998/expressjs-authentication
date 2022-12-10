@@ -3,25 +3,77 @@ const cookieParser = require("cookie-parser");
 const sessions = require('express-session');
 const app = express();
 const PORT = 4000;
-// creating 24 hours from milliseconds
+
 const oneDay = 1000 * 60 * 60 * 24;
+
+const movies = [
+  {
+    name : 'Amsterdam',
+    image : '/amsterdam.jpg'
+  },
+  {
+    name : 'Avengers',
+    image : '/avengers.jpg'
+  },
+  {
+    name : 'Batman',
+    image : '/batman.jpg'
+  },
+  {
+    name : 'Black Adam',
+    image : '/black-adam.jpg'
+  },
+  {
+    name : 'Bullet Train',
+    image : '/bullet-train.jpg'
+  },
+  {
+    name : 'Dune',
+    image : '/dune.jpg'
+  },
+  {
+    name : 'Free Guy',
+    image : '/free-guy.jpg'
+  },
+  {
+    name : 'Ram Setu',
+    image : '/ram-setu.jpg'
+  },
+  {
+    name : 'Soorarai Pottru',
+    image : '/soorarai-potru.jpg'
+  },
+  {
+    name : 'Spiderman',
+    image : '/spiderman.jpg'
+  },
+  {
+    name : 'Thank God',
+    image : '/thank-god.jpg'
+  },
+  {
+    name : 'Top Gun',
+    image : '/top-gun.jpg'
+  }
+]
+
 
 app.set('view engine', 'ejs');
 
-//session middleware
+
 app.use(sessions({
     secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
     saveUninitialized:true,
     cookie: { maxAge: oneDay },
     resave: false
 }));
-// parsing the incoming data
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//serving public file
+
 app.use(express.static(__dirname));
-// cookie parser middleware
+
 app.use(cookieParser());
 
 app.use(express.static('./public'))
@@ -30,30 +82,25 @@ app.use(function(req, res, next) {
   res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   next();
 });
-//username and password
+
 const myusername = 'Aravind'
 const mypassword = '1234'
 
-// a variable to save a session
+
 var session;
 app.get('/',(req,res) => {
   session=req.session;
   if(session.userid){
-      res.render("home", {myusername});
+      res.render("home", {myusername, movies});
   }else{
     const message = "";
     res.render('index', {message})
   }
 });
 app.post('/',(req,res) => {
-  // if(req.body.username == myusername && req.body.password == mypassword){
-  //     session=req.session;
-  //     session.userid=req.body.username;
-  //     console.log(req.session)
-  //     res.send(`Hey there, welcome <a href=\'/logout'>click to logout</a>`);
-  // }
+
   if(req.body.username != myusername){
-    const message = "Enter valid email"
+    const message = "Enter valid Username"
     res.render('index', {message})
   }else if(req.body.password != mypassword){
     const message = "Enter valid password"
@@ -63,7 +110,7 @@ app.post('/',(req,res) => {
       session = req.session;
       session.userid = req.body.username;
       console.log(req.session);
-      res.render('home', {myusername});
+      res.render('home', {myusername, movies});
   }
 })
 app.get('/logout',(req,res) => {
