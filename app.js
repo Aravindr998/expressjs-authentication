@@ -1,5 +1,4 @@
 const express = require('express');
-const cookieParser = require("cookie-parser");
 const sessions = require('express-session');
 const app = express();
 const PORT = 4000;
@@ -68,13 +67,7 @@ app.use(sessions({
     resave: false
 }));
 
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-
-app.use(express.static(__dirname));
-
-app.use(cookieParser());
 
 app.use(express.static('./public'))
 
@@ -124,4 +117,7 @@ app.get('/logout',(req,res) => {
   req.session.destroy();
   res.redirect('/');
 });
+app.all('*', (req, res) => {
+  res.status(404).render('pnf');
+})
 app.listen(PORT, () => console.log(`Server Running at port ${PORT}`));
